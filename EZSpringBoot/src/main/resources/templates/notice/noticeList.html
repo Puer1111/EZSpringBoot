@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<!-- html 에 적어준게 sts3 에서 하던 tag lib -->
+	<head>
+	<meta charset="UTF-8">
+	<title>공지사항 목록</title>
+	<link rel="stylesheet" href="/css/main.css">
+	</head>
+	<body>
+		<h1>공지사항 목록</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일자</th>
+					<th>조회수</th>
+				</tr>
+			</thead>
+			<tbody>
+			<!-- <th:block th:each=""></th:block> -->
+				<tr th:each="notice: ${nList}" var="notice">
+					<!-- 간단하게 출력할 때 사용 -->
+					<td>[[${notice.noticeNo}]]</td>
+					<!-- 값 불러올 때 대괄호 2개 보안& 유지보수 측면에서 권장 -->
+					<td>
+					<!-- 쿼리스트링 방식-->
+					<!-- <a th:href="@{/notice/detail/(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeSubject}"></a> -->
+					<!-- pathVariable  방식-->
+						<a th:href="@{/notice/detail/{noticeNo}(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeSubject}"></a>
+						
+					</td>
+					<td>[[${notice.noticeWriter}]]</td>
+					<td>[[${notice.noticeDate}]]</td>
+					<td>[[${notice.viewCount}]]</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr align="center">
+					<td colspan="5">
+						<th:block th:each="p:${#numbers.sequence(pn.startNavi,pn.endNavi)}">
+						<!-- each 가 var , var=p 랑 같다 -->
+						<!-- $가 startNavi 랑 endNavi에 붙어서 값 불러온다 -->
+						<a th:href="@{/notice/list(currentPage=${p})}" th:text="${p}"></a>
+							<!-- RequestParam 명이 currentPage라 currentPage로 작성 -->
+						</th:block>
+					</td>
+				</tr>
+			</tfoot>		
+		</table>
+		
+	
+	</body>
+	
+</html>

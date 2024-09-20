@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.EZ.boot.notice.model.mapper.NoticeMapper">
+  <!-- $와 #의 차이점
+  	#은 문자열이 된다 ' ' 로 감싸줌,
+  	$를 쓰면 전달받은 값 그대로 전달
+   -->
+	   <resultMap id="noticeResultMap" type="Notice">
+	   		<id property="noticeNo" column="NOTICE_NO"/>
+	   		<association property="noticeFile"
+	   					javaType="NoticeFile"
+						select="selectNoticeFile"
+						column="NOTICE_NO"/>
+	   </resultMap>
+   
+  <insert id="insertNoticeFile">
+  	INSERT INTO NOTICE_FILE_TBL VALUES(SQL_FILE_NO.NEXTVAL,#{fileName},#{fileRename},#{filePath},#{noticeNo})
+  </insert> 
+  
+	<delete id="deleteNoticeFile">
+		DELETE FROM NOTICE_FILE_TBL WHERE NOTICE_NO=#{noticeNo}
+	</delete>
+
+  <update id="updateNoticeFile">
+  	UPDATE NOTICE_FILE_TBL SET FILE_NAME=#{fileName} , FILE_RENAME=#{fileRename} , FILE_PATH=#{filePath}
+  	 WHERE NOTICE_NO=#{noticeNo} 
+  </update> 
+ 
+  <select id="selectNoticeFile" resultType="NoticeFile">
+  	SELECT * FROM NOTICE_FILE_TBL WHERE NOTICE_NO=#{noticeNo}
+  </select> 
+  
+  
+  <!-- Notice쿼리문 -->
+  <select id="selectOne" resultMap="noticeResultMap">
+  <!-- resultType 이름은 VO랑 이름 동일 -->
+  	SELECT * FROM NOTICE_TBL WHERE NOTICE_NO =#{noticeNo}
+  </select>
+   
+  <insert id="insertNotice" useGeneratedKeys="true">
+   
+  <selectKey order="BEFORE" resultType="_int" keyProperty="noticeNo">
+ 		SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
+  </selectKey>
+ 		INSERT INTO NOTICE_TBL 
+ 		VALUES(#{noticeNo},#{noticeSubject},#{noticeContent},#{noticeWriter},DEFAULT,DEFAULT,DEFAULT)
+  </insert>
+  	
+  <select id="selectList" resultType="Notice">
+   SELECT * FROM NOTICE_TBL 
+  </select>
+  <select id="getTotalCount" resultType="_int">
+  	SELECT COUNT(*) FROM NOTICE_TBL
+  </select>
+  <update id="updateNotice">
+	UPDATE NOTICE_TBL SET NOTICE_SUBJECT=#{noticeSubject} , NOTICE_CONTENT=#{noticeContent} ,UPDATE_DATE=DEFAULT 
+	WHERE NOTICE_NO=#{noticeNo}
+  </update>
+  <delete id="deleteNotice">
+  	DELETE FROM NOTICE_TBL WHERE NOTICE_NO=#{noticeNo}
+  </delete>
+  </mapper>
